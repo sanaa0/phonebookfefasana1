@@ -132,7 +132,7 @@ namespace phoneBook.Controllers
                 // TODO: Add update logic here
                 
                 
-                p1.AddedBy = User.Identity.GetUserId();
+                p1.AddedBy = Convert.ToString(  User.Identity.GetUserId());
                 p1.AddedOn = DateTime.Now.Date;
                 p1.DateOfBirth = collection.DateOfBirth;
                 p1.EmailId = collection.EmailId;
@@ -148,8 +148,6 @@ namespace phoneBook.Controllers
                 p1.TwitterId = collection.TwitterId;
                 p1.UpdateOn = DateTime.Now.Date;
                 db.SaveChanges();
-
-
                 return RedirectToAction("Index");
             }
             catch
@@ -166,17 +164,29 @@ namespace phoneBook.Controllers
 
         // POST: phoneBook/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, personviewmodel collection)
         {
+            PhoneBookDbEntities db = new PhoneBookDbEntities();
+            Person delable = new Person();
+            var converter  = db.People;
+     
             try
             {
-                // TODO: Add delete logic here
+                foreach (var member in converter)
+                {
+                    if (member.PersonId == id)
+                    {
+                        delable = member;
+                    }
+                }
+                db.People.Remove(delable);
+                db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return View(delable);
             }
         }
     }
